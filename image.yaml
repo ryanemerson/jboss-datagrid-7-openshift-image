@@ -180,8 +180,8 @@ modules:
       repositories:
           - name: cct_module
             git:
-                  url: https://github.com/jboss-openshift/cct_module.git
-                  ref: sprint-13
+                  url: https://github.com/ryanemerson/cct_module.git
+                  ref: sprint-13-sym-encrypt-fix
       install:
           - name: dynamic-resources
           - name: s2i-common
