@@ -228,8 +228,6 @@ function configure_infinispan_core() {
   local containers="<cache-container name=\"clustered\" default-cache=\"$DEFAULT_CACHE\" $cache_container_start $cache_container_statistics>"
   containers="$containers $transport"
   local cache_container_configuration=$(cat "${CACHE_CONTAINER_FILE}" | sed ':a;N;$!ba;s|\n|\\n|g')
-  containers="$containers ${cache_container_configuration}"
-  containers="$containers $containersecurity <!-- ##INFINISPAN_CACHE## --></cache-container>"
 
   DATAGRID_SERVICE_PROFILE="datagrid-service"
   if [ "$PROFILE" = "$DATAGRID_SERVICE_PROFILE" ]; then
@@ -237,7 +235,9 @@ function configure_infinispan_core() {
   else
     global_state="<global-state/>"
   fi
-  sed -i "s|<!-- ##GLOBAL_STATE## -->|$global_state|" "$containers"
+
+  containers="$containers $global_state ${cache_container_configuration}"
+  containers="$containers $containersecurity <!-- ##INFINISPAN_CACHE## --></cache-container>"
 
   sed -i "s|<!-- ##INFINISPAN_CORE## -->|$containers|" "$CONFIG_FILE"
 
