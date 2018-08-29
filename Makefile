@@ -42,9 +42,11 @@ endif
 _ANSIBLE_SERVICE_BROKER_USERNAME = admin
 _ANSIBLE_SERVICE_BROKER_PASSWORD = admin
 
+OPENSHIFT_PUBLIC_HOSTNAME?=127.0.0.1
+
 start-openshift-with-catalog:
 	@echo "---- Starting OpenShift ----"
-	oc cluster up
+	oc cluster up --public-hostname=$OPENSHIFT_PUBLIC_HOSTNAME
 	oc cluster add service-catalog
 	@echo "---- Granting admin rights to Developer ----"
 	oc login -u system:admin
