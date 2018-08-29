@@ -250,6 +250,10 @@
                            {
                               "name": "DEFAULT_CACHE_PARTITION_HANDLING_MERGE_POLICY",
                               "value": "REMOVE_ALL"
+                           },
+                           {
+                              "name": "PROFILE",
+                              "value": "datagrid-service"
                            }
                         ],
                         "image": "${IMAGE}",
