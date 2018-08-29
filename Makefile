@@ -193,6 +193,15 @@ test-caching-service-manually:
 	oc get routes
 .PHONY: test-caching-service-manually
 
+test-datagrid-service-manually:
+	oc set image-lookup $(DEV_IMAGE_NAME)
+	oc process datagrid-service -p APPLICATION_USER=test \
+	-p APPLICATION_USER_PASSWORD=test -p IMAGE=$(_DEV_IMAGE_STREAM) | oc create -f -
+	oc expose svc/datagrid-service-app-https || true
+	oc expose svc/datagrid-service-app-hotrod || true
+	oc get routes
+.PHONY: test-datagrid-service-manually
+
 clean-maven:
 	$(MVN_COMMAND) clean -f services/functional-tests/pom.xml || true
 .PHONY: clean-maven
@@ -230,6 +239,9 @@ test-capacity:
 
 run-caching-service-locally: stop-openshift start-openshift-with-catalog login-to-openshift prepare-openshift-project build-image push-image-to-local-openshift install-templates test-caching-service-manually
 .PHONY: run-caching-service-locally
+
+run-datagrid-service-locally: stop-openshift start-openshift-with-catalog login-to-openshift prepare-openshift-project build-image push-image-to-local-openshift install-templates test-datagrid-service-manually
+.PHONY: run-datagrid-service-locally
 
 #Before running this target, login to the remote OpenShift from console in whatever way recommended by the provider, make sure you specify the _TEST_PROJECT and OPENSHIFT_ONLINE_REGISTRY variables
 run-caching-service-remotely: clean-docker clean-maven prepare-openshift-project build-image push-image-to-online-openshift install-templates test-caching-service-manually
