@@ -231,6 +231,14 @@ function configure_infinispan_core() {
   containers="$containers ${cache_container_configuration}"
   containers="$containers $containersecurity <!-- ##INFINISPAN_CACHE## --></cache-container>"
 
+  DATAGRID_SERVICE_PROFILE="datagrid-service"
+  if [ "$PROFILE" = "$DATAGRID_SERVICE_PROFILE" ]; then
+    global_state="<global-state><overlay-configuration-storage/></global-state>"
+  else
+    global_state="<global-state/>"
+  fi
+  sed -i "s|<!-- ##GLOBAL_STATE## -->|$global_state|" "$containers"
+
   sed -i "s|<!-- ##INFINISPAN_CORE## -->|$containers|" "$CONFIG_FILE"
 
 }

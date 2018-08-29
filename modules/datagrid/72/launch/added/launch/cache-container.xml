@@ -1,4 +1,4 @@
-                <global-state/>
+                <!-- ##GLOBAL_STATE## -->
                 <distributed-cache-configuration name="transactional">
                     <transaction mode="NON_XA" locking="PESSIMISTIC"/>
                 </distributed-cache-configuration>

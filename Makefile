@@ -166,6 +166,7 @@ _relist-template-service-broker:
 
 _install_templates_in_openshift_namespace:
 	oc create -f services/caching-service.json -n openshift || true
+	oc create -f services/datagrid-service.json -n openshift || true
 .PHONY: _install_templates_in_openshift_namespace
 
 install-templates-in-openshift-namespace: _install_templates_in_openshift_namespace _relist-template-service-broker
@@ -173,6 +174,7 @@ install-templates-in-openshift-namespace: _install_templates_in_openshift_namesp
 
 install-templates:
 	oc create -f services/caching-service.json || true
+	oc create -f services/datagrid-service.json || true
 .PHONY: install-templates
 
 clear-templates:
