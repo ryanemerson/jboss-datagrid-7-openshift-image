@@ -170,8 +170,12 @@
                      {
                         "env": [
                            {
-                              "name": "USE_FIXED_MEMORY_SIZE",
-                              "value": "true"
+                              "name": "SERVICE_NAME",
+                              "value": "${APPLICATION_NAME}"
+                           },
+                           {
+                              "name": "SERVICE_PROFILE",
+                              "value": "datagrid-service"
                            },
                            {
                               "name": "JGROUPS_PING_PROTOCOL",
@@ -180,46 +184,6 @@
                            {
                               "name": "OPENSHIFT_DNS_PING_SERVICE_NAME",
                               "value": "${APPLICATION_NAME}-ping"
-                           },
-                           {
-                              "name": "OPENSHIFT_DNS_PING_SERVICE_PORT",
-                              "value": "8888"
-                           },
-                           {
-                              "name": "HTTPS_KEYSTORE",
-                              "value": "${APPLICATION_NAME}.p12"
-                           },
-                           {
-                              "name": "HTTPS_KEYSTORE_DIR",
-                              "value": "/var/run/secrets/java.io/keystores"
-                           },
-                           {
-                              "name": "HTTPS_NAME",
-                              "value": "NOT USED"
-                           },
-                           {
-                              "name": "HTTPS_PASSWORD",
-                              "value": "${APPLICATION_NAME}"
-                           },
-                           {
-                              "name": "SASL_SERVER_NAME",
-                              "value": "datagrid-service"
-                           },
-                           {
-                              "name": "INFINISPAN_CONNECTORS",
-                              "value": "hotrod,rest"
-                           },
-                           {
-                              "name": "HOTROD_AUTHENTICATION",
-                              "value": "TRUE"
-                           },
-                           {
-                              "name": "HOTROD_ENCRYPTION",
-                              "value": "TRUE"
-                           },
-                           {
-                              "name": "REST_SECURITY_DOMAIN",
-                              "value": "ApplicationRealm"
                            },
                            {
                               "name": "USERNAME",
@@ -238,22 +202,6 @@
                                     "key" : "application-password"
                                  }
                               }
-                           },
-                           {
-                              "name": "DEFAULT_OWNERS",
-                              "value": "1"
-                           },
-                           {
-                              "name": "DEFAULT_CACHE_PARTITION_HANDLING_WHEN_SPLIT",
-                              "value": "DENY_READ_WRITES"
-                           },
-                           {
-                              "name": "DEFAULT_CACHE_PARTITION_HANDLING_MERGE_POLICY",
-                              "value": "REMOVE_ALL"
-                           },
-                           {
-                              "name": "PROFILE",
-                              "value": "datagrid-service"
                            }
                         ],
                         "image": "${IMAGE}",
@@ -263,7 +211,7 @@
                                  "/opt/datagrid/bin/livenessProbe.sh"
                               ]
                            },
-                           "initialDelaySeconds": 60,
+                           "initialDelaySeconds": 15,
                            "timeoutSeconds": 10,
                            "periodSeconds": 20,
                            "successThreshold": 1,
@@ -275,7 +223,7 @@
                                  "/opt/datagrid/bin/readinessProbe.sh"
                               ]
                            },
-                           "initialDelaySeconds": 60,
+                           "initialDelaySeconds": 17,
                            "timeoutSeconds": 10,
                            "periodSeconds": 20,
                            "successThreshold": 2,
@@ -305,8 +253,12 @@
                               "mountPath": "/opt/datagrid/standalone/data"
                            },
                            {
-                              "name": "srv-data",
+                              "name": "keystore-volume",
                               "mountPath": "/var/run/secrets/java.io/keystores"
+                           },
+                           {
+                              "name": "service-certs",
+                              "mountPath": "/var/run/secrets/openshift.io/serviceaccount"
                            }
                         ],
                         "resources": {
@@ -320,52 +272,11 @@
                         }
                      }
                   ],
-                  "initContainers": [
-                     {
-                        "name": "pem-to-keystore",
-                        "image": "${IMAGE}",
-                        "env": [
-                           {
-                              "name": "TLS_KEY_FILE",
-                              "value": "/var/run/secrets/openshift.io/serviceaccount/tls.key"
-                           },
-                           {
-                              "name": "CRT_FILE",
-                              "value": "/var/run/secrets/openshift.io/serviceaccount/tls.crt"
-                           },
-                           {
-                              "name": "KEYSTORE_PKCS12",
-                              "value": "/var/run/secrets/java.io/keystores/keystore.pkcs12"
-                           },
-                           {
-                              "name": "KEYSTORE_FILE",
-                              "value": "/var/run/secrets/java.io/keystores/${APPLICATION_NAME}.p12"
-                           },
-                           {
-                              "name": "KEYSTORE_PASSWORD",
-                              "value": "${APPLICATION_NAME}"
-                           }
-                        ],
-                        "command": [
-                           "/bin/bash"
-                        ],
-                        "args": [
-                           "-c",
-                           "rm -f $KEYSTORE_FILE $KEYSTORE_PKCS12 && openssl pkcs12 -export -inkey $TLS_KEY_FILE -in $CRT_FILE -out $KEYSTORE_PKCS12 -password pass:$KEYSTORE_PASSWORD && keytool -importkeystore -noprompt -srckeystore $KEYSTORE_PKCS12 -srcstoretype pkcs12 -destkeystore $KEYSTORE_FILE -deststoretype pkcs12 -storepass $KEYSTORE_PASSWORD -srcstorepass $KEYSTORE_PASSWORD"
-                        ],
-                        "volumeMounts": [
-                           {
-                              "name": "srv-data",
-                              "mountPath": "/var/run/secrets/java.io/keystores"
-                           },
-                           {
-                              "name": "service-certs",
-                              "mountPath": "/var/run/secrets/openshift.io/serviceaccount"
-                           }
-                        ]
-                     }
-                  ],
                   "volumes": [
+                     {
+                        "name": "keystore-volume",
+                        "empty-dir": {}
+                     },
                      {
                         "name": "service-certs",
                         "secret": {
@@ -407,7 +318,7 @@
          "name": "APPLICATION_NAME",
          "displayName": "Application Name",
          "required": true,
-         "value": "datagrid-service-app"
+         "value": "datagrid-service"
       },
       {
          "description": "Infinispan image.",
