@@ -197,8 +197,8 @@ test-datagrid-service-manually:
 	oc set image-lookup $(DEV_IMAGE_NAME)
 	oc process datagrid-service -p APPLICATION_USER=test \
 	-p APPLICATION_USER_PASSWORD=test -p IMAGE=$(_DEV_IMAGE_STREAM) | oc create -f -
-	oc expose svc/datagrid-service-app-https || true
-	oc expose svc/datagrid-service-app-hotrod || true
+	oc expose svc/datagrid-service-https || true
+	oc expose svc/datagrid-service-hotrod || true
 	oc get routes
 .PHONY: test-datagrid-service-manually
 
