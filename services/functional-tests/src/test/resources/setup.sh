@@ -14,3 +14,11 @@ echo "Using image $IMAGE_NAME"
 oc create -f ../caching-service.json
 
 oc process caching-service -p IMAGE=${IMAGE_NAME} -p APPLICATION_USER=test -p APPLICATION_USER_PASSWORD=test | oc create -f -
+
+echo "---- Creating Datagrid Service for test ----"
+echo "Current dir $PWD"
+echo "Using image $IMAGE_NAME"
+
+oc create -f ../datagrid-service.json
+
+oc process datagrid-service -p IMAGE=${IMAGE_NAME} -p APPLICATION_USER=test -p APPLICATION_USER_PASSWORD=test | oc create -f -
