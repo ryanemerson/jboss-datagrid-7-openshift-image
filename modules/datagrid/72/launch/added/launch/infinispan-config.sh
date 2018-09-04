@@ -229,8 +229,7 @@ function configure_infinispan_core() {
   containers="$containers $transport"
   local cache_container_configuration=$(cat "${CACHE_CONTAINER_FILE}" | sed ':a;N;$!ba;s|\n|\\n|g')
 
-  DATAGRID_SERVICE_PROFILE="datagrid-service"
-  if [ "$SERVICE_PROFILE" = "$DATAGRID_SERVICE_PROFILE" ]; then
+  if [ -n "$ENABLE_OVERLAY_CONFIGURATION_STORAGE" ]; then
     global_state="<global-state><overlay-configuration-storage/></global-state>"
   else
     global_state="<global-state/>"

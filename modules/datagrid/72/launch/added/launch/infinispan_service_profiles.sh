@@ -49,6 +49,7 @@ function configure() {
          export DEFAULT_CACHE_PARTITION_HANDLING_MERGE_POLICY="REMOVE_ALL"
          export DEFAULT_CACHE_MEMORY_STORAGE_TYPE="off-heap"
          export DEFAULT_CACHE_MEMORY_EVICTION_TYPE="MEMORY"
+         export ENABLE_OVERLAY_CONFIGURATION_STORAGE="FALSE"
 
          # EVICTION_TOTAL_MEMORY_B exported by adjust_memory.sh
          source ${JBOSS_HOME}/bin/launch/adjust_memory.sh
@@ -69,6 +70,7 @@ function configure() {
          export DEFAULT_CACHE_PARTITION_HANDLING_WHEN_SPLIT="DENY_READ_WRITES"
          export DEFAULT_CACHE_PARTITION_HANDLING_MERGE_POLICY="REMOVE_ALL"
          export DEFAULT_CACHE_MEMORY_STORAGE_TYPE="off-heap"
+         export ENABLE_OVERLAY_CONFIGURATION_STORAGE="TRUE"
       fi
    fi
 }
