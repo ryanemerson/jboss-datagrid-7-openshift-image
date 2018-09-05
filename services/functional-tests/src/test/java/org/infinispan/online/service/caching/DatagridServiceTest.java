@@ -4,7 +4,6 @@ import io.fabric8.openshift.client.OpenShiftClient;
 import org.arquillian.cube.openshift.impl.requirement.RequiresOpenshift;
 import org.arquillian.cube.requirement.ArquillianConditionalRunner;
 import org.infinispan.online.service.endpoint.HotRodTester;
-import org.infinispan.online.service.endpoint.RESTTester;
 import org.infinispan.online.service.scaling.ScalingTester;
 import org.infinispan.online.service.utils.DeploymentHelper;
 import org.infinispan.online.service.utils.OpenShiftClientCreator;
@@ -31,7 +30,6 @@ public class DatagridServiceTest {
 
    URL hotRodService;
    URL restService;
-   HotRodTester hotRodTester;
    OpenShiftClient client = OpenShiftClientCreator.getClient();
 
    ReadinessCheck readinessCheck = new ReadinessCheck();
@@ -45,7 +43,7 @@ public class DatagridServiceTest {
       return ShrinkWrap
          .create(WebArchive.class, "test.war")
          .addAsLibraries(DeploymentHelper.testLibs())
-         .addPackage(CachingServiceTest.class.getPackage())
+         .addPackage(DatagridServiceTest.class.getPackage())
          .addPackage(ReadinessCheck.class.getPackage())
          .addPackage(ScalingTester.class.getPackage())
          .addPackage(HotRodTester.class.getPackage());
@@ -56,18 +54,22 @@ public class DatagridServiceTest {
       readinessCheck.waitUntilAllPodsAreReady(client);
       hotRodService = handle.getServiceWithName(SERVICE_NAME + "-hotrod");
       restService = handle.getServiceWithName(SERVICE_NAME + "-https");
-      URL hotRodService = handle.getServiceWithName(SERVICE_NAME + "-hotrod");
-      hotRodTester = new HotRodTester(SERVICE_NAME, hotRodService, client);
    }
 
+   @RunAsClient //must be run from the client where "oc" is installed
    @Test
-   public void should_read_and_write_through_hotrod_endpoint() {
+   public void should_read_and_write_through_hotrod_endpoint() throws Exception {
+      URL hotRodService = handle.getServiceWithName(SERVICE_NAME + "-hotrod");
+      HotRodTester hotRodTester = new HotRodTester(SERVICE_NAME, hotRodService, client);
       hotRodTester.putGetTest();
    }
 
    @RunAsClient //must be run from the client where "oc" is installed
    @Test
-   public void should_create_permanent_caches() {
+   public void should_create_permanent_caches() throws Exception {
+      URL hotRodService = handle.getServiceWithName(SERVICE_NAME + "-hotrod");
+      HotRodTester hotRodTester = new HotRodTester(SERVICE_NAME, hotRodService, client);
+
       hotRodTester.createNamedCache("custom", "replicated");
       hotRodTester.namedCachePutGetTest("custom");
 
