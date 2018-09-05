@@ -12,6 +12,7 @@ import org.infinispan.online.service.utils.OpenShiftCommandlineClient;
 import org.infinispan.online.service.utils.OpenShiftHandle;
 import org.infinispan.online.service.utils.ReadinessCheck;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -64,6 +65,7 @@ public class DatagridServiceTest {
       hotRodTester.putGetTest();
    }
 
+   @RunAsClient //must be run from the client where "oc" is installed
    @Test
    public void should_create_permanent_caches() {
       hotRodTester.createNamedCache("custom", "replicated");
