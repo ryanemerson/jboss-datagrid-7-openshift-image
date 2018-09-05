@@ -8,6 +8,7 @@ import org.infinispan.online.service.endpoint.RESTTester;
 import org.infinispan.online.service.scaling.ScalingTester;
 import org.infinispan.online.service.utils.DeploymentHelper;
 import org.infinispan.online.service.utils.OpenShiftClientCreator;
+import org.infinispan.online.service.utils.OpenShiftCommandlineClient;
 import org.infinispan.online.service.utils.OpenShiftHandle;
 import org.infinispan.online.service.utils.ReadinessCheck;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -31,10 +32,12 @@ public class DatagridServiceTest {
    URL restService;
    HotRodTester hotRodTester;
    OpenShiftClient client = OpenShiftClientCreator.getClient();
-   RESTTester restTester = new RESTTester(SERVICE_NAME, client);
 
    ReadinessCheck readinessCheck = new ReadinessCheck();
    OpenShiftHandle handle = new OpenShiftHandle(client);
+
+   ScalingTester scalingTester = new ScalingTester();
+   OpenShiftCommandlineClient commandlineClient = new OpenShiftCommandlineClient();
 
    @Deployment
    public static Archive<?> deploymentApp() {
@@ -59,6 +62,17 @@ public class DatagridServiceTest {
    @Test
    public void should_read_and_write_through_hotrod_endpoint() {
       hotRodTester.putGetTest();
+   }
+
+   @Test
+   public void should_create_permanent_caches() {
+      hotRodTester.createNamedCache("custom", "replicated");
+      hotRodTester.namedCachePutGetTest("custom");
+
+      scalingTester.scaleDownStatefulSet(0, SERVICE_NAME, client, commandlineClient, readinessCheck);
+      scalingTester.scaleUpStatefulSet(1, SERVICE_NAME, client, commandlineClient, readinessCheck);
+
+      hotRodTester.namedCachePutGetTest("custom");
    }
 
 }

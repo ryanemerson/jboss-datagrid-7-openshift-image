@@ -17,6 +17,7 @@ import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.configuration.Configuration;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
 import org.infinispan.client.hotrod.configuration.SaslQop;
+import org.infinispan.commons.api.CacheContainerAdmin;
 import org.infinispan.commons.util.CloseableIteratorSet;
 import org.infinispan.online.service.utils.TrustStore;
 
@@ -198,4 +199,20 @@ public class HotRodTester implements EndpointTester {
          currentCacheSize = byteArrayCache.size();
       } while (currentCacheSize > lastCacheSize);
    }
+
+   public void createNamedCache(String cacheName, String template) {
+      cacheManager.administration()
+         .withFlags(CacheContainerAdmin.AdminFlag.PERMANENT)
+         .createCache(cacheName, template);
+   }
+
+   public void namedCachePutGetTest(String cacheName) {
+      //given
+      RemoteCache<String, String> stringCache = cacheManager.getCache(cacheName);
+      //when
+      stringCache.put(hotRodKey, "value");
+      //then
+      assertEquals("value", stringCache.get(hotRodKey));
+   }
+
 }
