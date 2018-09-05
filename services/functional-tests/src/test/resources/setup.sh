@@ -5,7 +5,9 @@ IMAGE_NAME=${image:-jboss-datagrid-7/datagrid72-openshift}
 
 echo "---- Clearing up (any potential) leftovers ----"
 oc delete all,secrets,sa,templates,configmaps,daemonsets,clusterroles,rolebindings,serviceaccounts --selector=template=caching-service || true
+oc delete all,secrets,sa,templates,configmaps,daemonsets,clusterroles,rolebindings,serviceaccounts --selector=template=datagrid-service || true
 oc delete template caching-service || true
+oc delete template datagrid-service || true
 
 echo "---- Creating Caching Service for test ----"
 echo "Current dir $PWD"
