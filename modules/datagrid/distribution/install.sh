@@ -3,8 +3,8 @@
 set -e
 
 ARTIFACTS_DIR=/tmp/artifacts
-DISTRIBUTION_ZIP="jboss-datagrid-7.3.0-1-server.zip"
-DATAGRID_VERSION="7.3.0"
+DATAGRID_VERSION="9.4.11-SNAPSHOT"
+DISTRIBUTION_ZIP="jboss-datagrid-server-$DATAGRID_VERSION.zip"
 DEV_SERVER_NAME='infinispan-server-8.5.*-redhat-SNAPSHOT'
 DEV_SERVER_NAME_ZIP="${DEV_SERVER_NAME}-*-bin.zip"
 INTERMEDIATE_SERVER_NAME_ZIP='jboss-datagrid-7.3.0.*-server.zip'
@@ -23,9 +23,9 @@ unzip -q $ARTIFACTS_DIR/$DISTRIBUTION_ZIP
 
 # This also executes only on dev builds
 if [ -d $DEV_SERVER_NAME ]; then
-  mv $DEV_SERVER_NAME jboss-datagrid-$DATAGRID_VERSION-server
+  mv $DEV_SERVER_NAME jdg-server-$DATAGRID_VERSION
 fi
-mv jboss-datagrid-$DATAGRID_VERSION-server $JBOSS_HOME
+mv jdg-server-$DATAGRID_VERSION $JBOSS_HOME
 
 chown -R jboss:root $JBOSS_HOME
 chmod -R g+rwX $JBOSS_HOME
